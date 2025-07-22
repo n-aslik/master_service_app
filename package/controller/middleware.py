@@ -4,33 +4,30 @@ from ..service.jwt_hand import parse_token
 security=HTTPBearer()
 
 
-async def checkautherization(sec_route:HTTPAuthorizationCredentials=Security(security)):
+async def check_client_autherization(sec_route:HTTPAuthorizationCredentials=Security(security)):
     if not sec_route.scheme=="Bearer":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid auth scheme")
     token=sec_route.credentials
     pload=await parse_token(token)
     if not token:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Token is empty")
-    if pload.role!="user" and pload.role =="admin":
+    if pload.role!="client" :
         raise  HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Permission denied")
     return await parse_token(token)
 
-async def checkautherization_admin_permission(sec_route:HTTPAuthorizationCredentials=Security(security)):
+async def check_master_autherization(sec_route:HTTPAuthorizationCredentials=Security(security)):
     if not sec_route.scheme=="Bearer":
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="invalid auth scheme")
     token=sec_route.credentials
     pload=await parse_token(token)
     if not token:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Token is empty")
-    if pload.role!="admin":
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Permission denied")
+    if pload.role!="master" or pload.role!="admin" :
+        raise  HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Permission denied")
     return await parse_token(token)
 
 
 
-        
-        
-        
 
 
        

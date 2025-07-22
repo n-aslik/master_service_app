@@ -1,29 +1,21 @@
-from fastapi import Depends,APIRouter,WebSocket,WebSocketDisconnect
-from ..schemas import users
+from fastapi import Depends,APIRouter, Response
+from ..schemas import schema
 from typing import Any
-from fastapi.responses import HTMLResponse
-from ..repository import user_queries
-from . import middleware
-import random
+from package.repository import auth_module
+from package.service.jwt_hand import create_refresh_token
 
 
+router=APIRouter(prefix="/api/v1/auth",tags=["AUTHORIZATION"])
 
-router=APIRouter(prefix="/api",tags=["auth"])
-
-@router.post("/sign-up")
-async def sign_up(users: users.User):
-    return await user_queries.create_user(users)
     
 @router.post("/sign-in")
-async def login(users: users.Login):
-    return await user_queries.login(users)
-
-@router.put("/forgot-password")
-async def forgot_password(phone:str):
-    symbols = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',0,1,2,3,4,5,6,7,8,9,'!','/','?','*',"$",'.']
-    password = "".join(str(random.choice(symbols))for _ in range(6))
-    return await user_queries.forgot_password(phone, password)
+async def login(users: schema.Login):
+    return await auth_module.login(users)
 
 @router.put("/change-password")
 async def change_password(phone:str, password:str, new_password: str):
-    return await user_queries.change_password(phone, password, new_password)
+    return await auth_module.change_password(phone, password, new_password)
+
+@router.post('/refresh/token')
+async def refresh_token(response: Response, payload: dict = Depends(create_refresh_token)):
+    return await auth_module.refresh_token(payload)

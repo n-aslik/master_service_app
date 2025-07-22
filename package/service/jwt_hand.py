@@ -1,9 +1,8 @@
 from fastapi import HTTPException, status
-from jose import jwt, ExpiredSignatureError
+from jose import jwt
 from datetime import datetime,timedelta
 from os import getenv
 from pydantic import BaseModel
-
 
 
 jwt_secret=getenv("secret")
@@ -41,7 +40,7 @@ async def parse_token (token:str)->Payloads:
         decoded_token=jwt.decode(token,jwt_secret,algorithms=jwt_algorithm)
         payload=Payloads(**decoded_token)
         return payload
-    except ExpiredSignatureError:
+    except :
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail="Token expired")
 
 
