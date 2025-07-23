@@ -43,4 +43,5 @@ async def logout(id: int):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{users}")
       
     
-    
+async def send_message():
+    return {'message':"Вы изменили пароль"}

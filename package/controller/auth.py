@@ -1,4 +1,4 @@
-from fastapi import Depends,APIRouter, Response
+from fastapi import Depends,APIRouter, Response, BackgroundTasks
 from ..schemas import schema
 from typing import Any
 from package.repository import auth_module
@@ -14,7 +14,9 @@ async def login(users: schema.Login):
 
 @router.put("/change-password")
 async def change_password(phone:str, password:str, new_password: str):
-    return await auth_module.change_password(phone, password, new_password)
+    message = BackgroundTasks()
+    message.add_task(auth_module.send_message())
+    return message, await auth_module.change_password(phone, password, new_password)
 
 @router.post('/refresh/token')
 async def refresh_token(response: Response, payload: dict = Depends(create_refresh_token)):
