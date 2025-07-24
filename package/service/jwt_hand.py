@@ -36,7 +36,7 @@ class  JWTTokenBearer(HTTPBearer):
     def verify_jwt(self, jwt_token: str, request: Request) -> bool:
         IsValidToken: bool = False
         try:
-            payload = jwt.decode(jwt_token, secret.public_key,algorithms=[jwt_algorithm])
+            payload = jwt.decode(jwt_token, secret.public_key)
             if time.time() < payload["expires"]:
                 IsValidToken = True
             else:
@@ -64,12 +64,12 @@ def generate_jwt_token (token_type:int, user_id:str, phone: str, role: str)->dic
         "expires" : time.time()+token["expiration"]
     }
     header = {"alg" : jwt_algorithm}
-    encoded_token=jwt.encode(payload, secret.private_key, algorithm = jwt_algorithm)
+    encoded_token=jwt.encode(payload, secret.private_key)
     return encoded_token
 
 def access_token (credentials: str = Depends(JWTTokenBearer()))->dict:
     try:
-        decoded_token = jwt.decode(credentials, secret.public_key, algorithms=[jwt_algorithm])
+        decoded_token = jwt.decode(credentials, secret.public_key)
         if decoded_token.get("token_type") != "access":
             raise HTTPException(status_code=403, detail="Invalid token type: must be access token")
         if time.time() > decoded_token["expires"]:
@@ -81,7 +81,7 @@ def access_token (credentials: str = Depends(JWTTokenBearer()))->dict:
 
 def refresh_token (credentials: str = Depends(JWTTokenBearer()))->dict:
     try:
-        decoded_token = jwt.decode(credentials, secret.public_key, algorithms=[jwt_algorithm])
+        decoded_token = jwt.decode(credentials, secret.public_key)
         if decoded_token.get("token_type") != "refresh":
             raise HTTPException(status_code=403, detail="Invalid token type: must be refresh token")
         if time.time() > decoded_token["expires"]:
@@ -93,7 +93,7 @@ def refresh_token (credentials: str = Depends(JWTTokenBearer()))->dict:
 
 def parse_token (token:str)->dict:
     try:
-        decoded_token=jwt.decode(token,secret.private_key, algorithms=[jwt_algorithm])
+        decoded_token=jwt.decode(token,secret.private_key)
         return decoded_token
     except :
         raise HTTPException(status_code=403, detail="JWT decode error")
