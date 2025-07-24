@@ -1,6 +1,6 @@
 from fastapi import HTTPException,status, Response
 from database.dbconn import async_get_db
-from ..service.jwt_hand import create_access_token, create_refresh_token
+from ..service.jwt_hand import generate_jwt_token
 from ..schemas import schema
 
 async def change_password(phone:str, password: str, new_password: str):
@@ -18,19 +18,19 @@ async def login(data: schema.Login):
         cur.execute("CALL masters_services.login(%s, %s, %s);" ,(data.phone_number, data.password, '{}'))
         user = cur.fetchone()[0]
         if user['status'] == 1:
-            user['access_token'] = create_access_token(user['id'], data.phone_number, user['role'] )
-            user['refresh_token'] = create_refresh_token(user['id'], data.phone_number, user['role'])
+            user['access_token'] = generate_jwt_token(1, user['id'], data.phone_number, user['role'] )
+            user['refresh_token'] = generate_jwt_token(2, user['id'], data.phone_number, user['role'])
             return user
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{user}")
  
 async def refresh_token(payload):
-    access_token = create_access_token(payload["user_id"], payload["phone"], payload["role"])
-    refresh_token = create_refresh_token(payload["user_id"], payload["phone"], payload["role"])
+    access_token = generate_jwt_token(1, payload["user_id"], payload["phone"], payload["role"])
+    refresh_token = generate_jwt_token(2, payload["user_id"], payload["phone"], payload["role"])
     return {
-        'status', 1,
-        'user_id', payload["user_id"],
-        'access_token', access_token,
-        'refresh_token', refresh_token
+        'status': 1,
+        'user_id': payload["user_id"],
+        'access_token': access_token,
+        'refresh_token': refresh_token
         
     }
     
@@ -43,5 +43,8 @@ async def logout(id: int):
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{users}")
       
     
-async def send_message():
-    return {'message':"Вы изменили пароль"}
+def send_message(phone: str, message = "" ):
+    with open('message.txt','w', encoding = "UTF-8") as file:
+        file.write(f" {phone} {message}")
+
+    

@@ -45,5 +45,4 @@ class ForgotPassword(BaseModel):
     phone_number:str
 
 
-
    
