@@ -17,7 +17,6 @@ TOKEN_TYPES = {
 }
 
 secret = Keys()
-jwt_algorithm = getenv("algorithm")
 # access_expire_token=30
 
 
@@ -63,7 +62,7 @@ def generate_jwt_token (token_type:int, user_id:str, phone: str, role: str)->dic
         "role" : role,
         "expires" : time.time()+token["expiration"]
     }
-    header = {"alg" : jwt_algorithm}
+    header = {"alg" : "RS256"}
     encoded_token=jwt.encode(payload, secret.private_key)
     return encoded_token
 
