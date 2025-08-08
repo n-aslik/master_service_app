@@ -1,6 +1,3 @@
-import subprocess
-import time
-
 # Настройки
 FASTAPI_HOST = "127.0.0.1"
 FASTAPI_PORT = "8000"
@@ -16,7 +13,7 @@ def run_fastapi():
 def run_pinggy():
     print("🌐 Подключаем Pinggy...")
     return subprocess.Popen([
-        "pinggy", "--http", f"{FASTAPI_HOST}:{FASTAPI_PORT}"
+       "python", "-m", "pinggy", "--http", f"{FASTAPI_HOST}:{FASTAPI_PORT}"
     ])
 
 def main():
@@ -35,3 +32,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
