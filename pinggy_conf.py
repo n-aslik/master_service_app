@@ -1,3 +1,6 @@
+import subprocess
+import time
+
 # Настройки
 FASTAPI_HOST = "127.0.0.1"
 FASTAPI_PORT = "8000"

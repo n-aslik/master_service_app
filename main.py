@@ -5,9 +5,6 @@ from package.controller.client import router as client_router
 from package.controller.master import router as master_router
 from package.controller.auth import router as auth_router
 from fastapi.middleware.cors import CORSMiddleware
-import subprocess
-import time
-
 
 app = FastAPI(title="Master`s Services")
 
