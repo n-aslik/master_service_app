@@ -60,9 +60,9 @@ async def get_clients(id: int):
     with async_get_db() as db:
         cur = db.cursor()
         cur.execute("SELECT masters_services.get_clients(%s);",(id,))
-        client = cur.fetchone()[0]
-        return client
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
+        clients = cur.fetchone()[0]
+        return clients
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{clients}")
 
 
 async def create_client_orders(id: int, data: schema.Client_Orders_Model):

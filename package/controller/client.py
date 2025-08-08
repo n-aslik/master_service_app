@@ -24,8 +24,8 @@ async def get_client( payload: dict = Depends(JWTHandler.access_token)):
     return await client_module.get_client(payload["user_id"])
 
 @router.get("/clients")
-async def get_client(id: Optional[int] = None, payload: dict = Depends(JWTHandler.access_token)):
-    return await client_module.get_client(id)
+async def get_clients(id: Optional[int] = None, payload: dict = Depends(JWTHandler.access_token)):
+    return await client_module.get_clients(id)
 
 @router.post('/client-comment')
 async def create_client_comment(data: schema.Client_Comment_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
