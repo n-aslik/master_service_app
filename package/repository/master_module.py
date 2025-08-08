@@ -57,10 +57,9 @@ async def delete_master(id: int):
 async def get_masters(id: int):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("SELECT masters_services.get_master(%s, %s);",(id, '{}'))
+        cur.execute("SELECT masters_services.get_master(%s);",(id,))
         master = cur.fetchone()[0]
-        if master['status'] == 1:
-            return master
+        return master
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{master}")
 
 async def get_master_position(position_id: int, cost: float):
@@ -68,8 +67,7 @@ async def get_master_position(position_id: int, cost: float):
         cur = db.cursor()
         cur.execute("SELECT masters_services.get_masters_position(%s, %s);",(position_id, cost))
         master = cur.fetchone()[0]
-        if master['status'] == 1:
-            return master
+        return master
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{master}")
  
 async def get_master_accepted_orders(id: int):
@@ -77,8 +75,7 @@ async def get_master_accepted_orders(id: int):
         cur = db.cursor()
         cur.execute("SELECT masters_services.get_master_accepted_orders(%s);",(id,))
         master = cur.fetchone()[0]
-        if master['status'] == 1:
-            return master
+        return master
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{master}")
  
 
@@ -95,10 +92,10 @@ async def create_service_type(types: str, cost: float):
             return serv
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{serv}")
 
-async def update_service_type(data: schema.Service_Type_Model):
+async def update_service_type(id: int, data: schema.Service_Type_Model):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.update_service_type(%s, %s, %s);",(data.type, data.cost, '{}'))
+        cur.execute("CALL masters_services.update_service_type(%s, %s, %s, %s);",(id, data.type, data.cost, '{}'))
         serv = cur.fetchone()[0]
         if serv['status'] == 1:
             return serv
@@ -111,6 +108,14 @@ async def delete_service_type(id: int):
         serv = cur.fetchone()[0]
         if serv['status'] == 1:
             return serv
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{serv}")
+
+async def get_service_type():
+    with async_get_db() as db:
+        cur = db.cursor()
+        cur.execute("SELECT masters_services.get_service_type();",())
+        serv = cur.fetchone()[0]
+        return serv
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{serv}")
 
 

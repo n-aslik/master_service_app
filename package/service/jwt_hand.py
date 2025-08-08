@@ -1,11 +1,7 @@
-from fastapi import HTTPException, status, Request, Depends
+from fastapi import HTTPException, Request, Depends
 from jose import jwt
-from datetime import datetime,timedelta
-from os import getenv
 from.config import Keys 
 from fastapi.security import HTTPBearer,HTTPAuthorizationCredentials
-from pydantic import BaseModel
-from ..schemas import schema
 import time
 
 
@@ -35,7 +31,7 @@ class  JWTTokenBearer(HTTPBearer):
     def verify_jwt(self, jwt_token: str, request: Request) -> bool:
         IsValidToken: bool = False
         try:
-            payload = jwt.decode(jwt_token, secret.public_key)
+            payload = jwt.decode(jwt_token, secret.public_key, algorithms='RS256')
             if time.time() < payload["expires"]:
                 IsValidToken = True
             else:
@@ -62,14 +58,14 @@ def generate_jwt_token (token_type:int, user_id:str, phone: str, role: str)->dic
         "role" : role,
         "expires" : time.time()+token["expiration"]
     }
-    header = {"alg" : "RS256"}
-    encoded_token=jwt.encode(payload, secret.private_key)
+    header = {'alg' : 'RS256'}
+    encoded_token=jwt.encode(payload, secret.private_key, algorithm='RS256')
     return encoded_token
 
 def access_token (credentials: str = Depends(JWTTokenBearer()))->dict:
     try:
         decoded_token = jwt.decode(credentials, secret.public_key)
-        if decoded_token.get("token_type") != "access":
+        if decoded_token.get("token_type") != "access_token":
             raise HTTPException(status_code=403, detail="Invalid token type: must be access token")
         if time.time() > decoded_token["expires"]:
             raise HTTPException(status_code=401, detail="Token expired")
@@ -80,8 +76,8 @@ def access_token (credentials: str = Depends(JWTTokenBearer()))->dict:
 
 def refresh_token (credentials: str = Depends(JWTTokenBearer()))->dict:
     try:
-        decoded_token = jwt.decode(credentials, secret.public_key)
-        if decoded_token.get("token_type") != "refresh":
+        decoded_token = jwt.decode(credentials, secret.public_key, algorithms='RS256')
+        if decoded_token.get("token_type") != "refresh_token":
             raise HTTPException(status_code=403, detail="Invalid token type: must be refresh token")
         if time.time() > decoded_token["expires"]:
             raise HTTPException(status_code=401, detail="Token expired")
@@ -92,7 +88,7 @@ def refresh_token (credentials: str = Depends(JWTTokenBearer()))->dict:
 
 def parse_token (token:str)->dict:
     try:
-        decoded_token=jwt.decode(token,secret.private_key)
+        decoded_token=jwt.decode(token,secret.private_key, algorithms='RS256')
         return decoded_token
     except :
         raise HTTPException(status_code=403, detail="JWT decode error")
