@@ -14,7 +14,7 @@ async def login(data: schema.Login = Depends()):
     return await auth_module.login(data)
 
 @router.post('/send-message')
-async def send_message(background_tasks: BackgroundTasks, phone:str = Depends()):
+async def send_message(phone: str, background_tasks: BackgroundTasks):
     background_tasks.add_task(auth_module.send_message, phone,  message = "Вы изменили свой пароль")
     return {'message':"Сообщение отобразился на фоне"}
 
