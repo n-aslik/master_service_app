@@ -27,13 +27,11 @@ class Master_Model(User):
     position_id: Optional[List[int]] 
     
 class Client_Comment_Model(BaseModel):
-    client_id: int
     comment: Optional[List[str]] = None
     rating: Optional[int] = None
     master_id: int
 
 class Client_Orders_Model(BaseModel):
-    client_id:int 
     orders: Optional[List[str]] = None
     deadline: Optional[str] = None
     
@@ -43,6 +41,9 @@ class Login(BaseModel):
     
 class ForgotPassword(BaseModel):
     phone_number:str
+    
+class ChangePassword(Login):
+    new_password: str
 
 
    

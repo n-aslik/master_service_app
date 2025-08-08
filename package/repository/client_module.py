@@ -56,6 +56,44 @@ async def get_client(id: int):
         return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
+async def create_client_orders(id: int, data: schema.Client_Orders_Model):
+    with async_get_db() as db:
+        cur = db.cursor()
+        cur.execute("CALL masters_services.create_client_orders(%s, %s, %s, %s);" ,('{}', id, data.deadline, data.orders))
+        client = cur.fetchone()[0]
+        if client['status'] == 1:
+            return client
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
+
+async def create_client_comments(id: int, data: schema.Client_Comment_Model):
+    with async_get_db() as db:
+        cur = db.cursor()
+        cur.execute("CALL masters_services.get_client_comment(%s, %s, %s, %s, %s);" ,('{}', id, data.master_id, data.rating, data.comment))
+        client = cur.fetchone()[0]
+        if client['status'] == 1:
+            return client
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
+
+async def update_client_orders(id: int, data: schema.Client_Orders_Model):
+    with async_get_db() as db:
+        cur = db.cursor()
+        cur.execute("CALL masters_services.update_client_orders(%s, %s, %s, %s);" ,('{}', id, data.deadline, data.orders))
+        client = cur.fetchone()[0]
+        if client['status'] == 1:
+            return client
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
+
+async def update_client_comments(id: int, data: schema.Client_Comment_Model):
+    with async_get_db() as db:
+        cur = db.cursor()
+        cur.execute("CALL masters_services.update_client_comment(%s, %s, %s, %s, %s);" ,('{}', id, data.master_id, data.rating, data.comment))
+        client = cur.fetchone()[0]
+        if client['status'] == 1:
+            return client
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
+
+
+
 async def get_client_comment(master_id: int, client_id: int):
     with async_get_db() as db:
         cur = db.cursor()

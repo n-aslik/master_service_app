@@ -3,10 +3,10 @@ from database.dbconn import async_get_db
 from ..service.jwt_hand import generate_jwt_token
 from ..schemas import schema
 
-async def change_password(phone:str, password: str, new_password: str):
+async def change_password(data: schema.ChangePassword):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.change_password(%s, %s, %s, %s);" ,(phone, password, new_password, '{}'))
+        cur.execute("CALL masters_services.change_password(%s, %s, %s, %s);" ,(data.phone_number, data.password, data.new_password, '{}'))
         users = cur.fetchone()[0]
         if users['status'] == 1:
             return users
