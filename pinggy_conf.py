@@ -1,5 +1,12 @@
 import subprocess
 import time
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--http', help='Описание аргумента http')
+args = parser.parse_args()
+
+print(args.http)
 
 # Настройки
 FASTAPI_HOST = "127.0.0.1"

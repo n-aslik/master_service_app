@@ -83,10 +83,10 @@ async def get_master_accepted_orders(id: int):
 
 # region SERVICE TYPE
 
-async def create_service_type(types: str, cost: float):
+async def create_service_type(data: schema.Service_Type_Model):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.create_service_type(%s, %s, %s);",(types, cost, '{}'))
+        cur.execute("CALL masters_services.create_service_type(%s, %s, %s);",(data.type, data.cost, '{}'))
         serv = cur.fetchone()[0]
         if serv['status'] == 1:
             return serv

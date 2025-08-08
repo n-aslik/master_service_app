@@ -39,7 +39,7 @@ async def get_master_accepted_orders(payload:dict=Depends(JWTHandler.access_toke
 
 @router.post("/service-type", tags = ["SERVICE-TYPE"])
 async def create_service_type(data: schema.Service_Type_Model = Depends(), payload:dict=Depends(JWTHandler.access_token) ):
-    return  await master_module.create_master(data)
+    return  await master_module.create_service_type(data)
 
 @router.put("/service-type", tags = ["SERVICE-TYPE"])
 async def update_service_type(id: int, data:schema.Service_Type_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
