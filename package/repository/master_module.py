@@ -69,6 +69,15 @@ async def get_master_position(position_id: int, cost: float):
         master = cur.fetchone()[0]
         return master
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{master}")
+
+async def accepted_orders(client_id: int, master_id: int):
+    with async_get_db() as db:
+        cur = db.cursor()
+        cur.execute("CALL masters_services.accepted_orders(%s, %s, %s);", (client_id, master_id, '{}' ))
+        master = cur.fetchone()[0]
+        return master
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{master}")
+ 
  
 async def get_master_accepted_orders(id: int):
     with async_get_db() as db:

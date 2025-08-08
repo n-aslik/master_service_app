@@ -17,7 +17,7 @@ async def create_master(data: schema.Master_Model = Depends() ):
 async def update_master(id: int, data:schema.Master_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
     return await master_module.update_master(payload["user_id"], data)
     
-@router.delete('master', tags = ['MASTERS'])
+@router.delete('/master', tags = ['MASTERS'])
 async def delete_master(payload:dict=Depends(JWTHandler.access_token)):
     return await master_module.delete_master(payload["user_id"])
 
@@ -28,6 +28,10 @@ async def get_master(id, payload: dict= Depends(JWTHandler.access_token)):
 @router.get('/master-position', tags = ['MASTERS'])
 async def get_master_position(position_id: Optional[int] = None, cost: Optional[float] = None, payload:dict = Depends(JWTHandler.access_token)):
     return await master_module.get_master_position(position_id, cost)
+
+@router.post('/accepted-orders', tags = ['MASTERS'])
+async def accepted_orders(client_id, payload: dict = Depends(JWTHandler.access_token)):
+    return await master_module.accepted_orders(client_id, payload["user_id"])
 
 @router.get('/master-accepted-orders', tags = ['MASTERS'])
 async def get_master_accepted_orders(payload:dict=Depends(JWTHandler.access_token)):

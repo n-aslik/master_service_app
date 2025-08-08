@@ -20,7 +20,7 @@ async def delete_client(id:int, payload: dict = Depends(JWTHandler.access_token)
     return await client_module.delete_client(payload["user_id"])
 
 @router.get("/client")
-async def get_client( payload: dict = Depends(JWTHandler.access_token)):
+async def get_client(payload: dict = Depends(JWTHandler.access_token)):
     return await client_module.get_client(payload["user_id"])
 
 @router.get("/clients")

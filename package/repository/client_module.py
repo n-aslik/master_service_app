@@ -51,7 +51,7 @@ async def delete_client(id: int):
 async def get_client(id: int):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("SELECT masters_services.get_client(%s);",(id))
+        cur.execute("SELECT masters_services.get_client(%s);",(id,))
         client = cur.fetchone()[0]
         return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
