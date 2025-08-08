@@ -53,8 +53,7 @@ async def get_client(id: int):
         cur = db.cursor()
         cur.execute("SELECT masters_services.get_client(%s);" ,(id))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
-            return client
+        return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
 async def get_client_comment(master_id: int, client_id: int):
@@ -62,17 +61,15 @@ async def get_client_comment(master_id: int, client_id: int):
         cur = db.cursor()
         cur.execute("SELECT masters_services.get_client_comment(%s, %s);" ,(master_id, client_id))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
-            return client
+        return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
 async def get_client_orders(client_id: int):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("SELECT masters_services.get_client_orders(%s);" ,( client_id))
+        cur.execute("SELECT masters_services.get_client_orders( %s );" ,( client_id,))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
-            return client
+        return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
 

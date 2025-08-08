@@ -18,7 +18,7 @@ async def update_master(id: int, data:schema.Master_Model = Depends(), payload:d
     return await master_module.update_master(payload["user_id"], data)
     
 @router.delete('master', tags = ['MASTERS'])
-async def delete_master(id:int, payload:dict=Depends(JWTHandler.access_token)):
+async def delete_master(payload:dict=Depends(JWTHandler.access_token)):
     return await master_module.delete_master(payload["user_id"])
 
 @router.get("/master", tags = ['MASTERS'])
