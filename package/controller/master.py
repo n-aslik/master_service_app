@@ -1,4 +1,4 @@
-from fastapi import APIRouter,Depends,Path,BackgroundTasks
+from fastapi import APIRouter,Depends
 from ..schemas import schema
 from ..repository import master_module
 from typing import Optional
@@ -24,10 +24,6 @@ async def delete_master(payload:dict=Depends(JWTHandler.access_token)):
 @router.get("/master", tags = ['MASTERS'])
 async def get_master(id, payload: dict= Depends(JWTHandler.access_token)):
     return await master_module.get_masters(id)
-
-@router.get('/master-position', tags = ['MASTERS'])
-async def get_master_position(position_id: Optional[int] = None, cost: Optional[float] = None, payload:dict = Depends(JWTHandler.access_token)):
-    return await master_module.get_master_position(position_id, cost)
 
 @router.post('/accepted-orders', tags = ['MASTERS'])
 async def accepted_orders(client_id, payload: dict = Depends(JWTHandler.access_token)):
@@ -57,6 +53,21 @@ async def delete_service_type(id:int, payload:dict=Depends(JWTHandler.access_tok
 async def get_service_type(payload: dict= Depends(JWTHandler.access_token)):
     return await master_module.get_service_type()
 
+# endregion
+
+# region POSITION
+
+@router.post('/position', tags = ["POSITION"])
+async def create_position(data: schema.PositionModel, payload: dict= Depends(JWTHandler.access_token)):
+    return await master_module.create_position(data)
+
+@router.delete('/position', tags = ["POSITION"])
+async def delete_position(id: int, payload: dict= Depends(JWTHandler.access_token)):
+    return await master_module.delete_position(id)
+
+@router.get('/position', tags = ["POSITION"])
+async def get_position(payload: dict= Depends(JWTHandler.access_token)):
+    return await master_module.get_position()
 # endregion
 
    

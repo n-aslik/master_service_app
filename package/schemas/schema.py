@@ -7,7 +7,6 @@ class User(BaseModel):
     gender: bool
     birth_date: str
     phone_number: Optional[str] = None
-    password: Optional[str] = None
     email: Optional[str] = None
     social_nik: Optional[str] = None
     qr_code: Optional[str] = None
@@ -20,20 +19,23 @@ class Client_Model(User):
 class Service_Type_Model(BaseModel):
     type: str
     cost: float
+    
+class PositionModel(BaseModel):
+    name: str
+    service_type_id: int
 
 class Master_Model(User):
     experience: int
-    service_type_id: Optional[int] = None
-    position_id: Optional[List[int]] 
+    position_id: Optional[List[int]] = None
     
 class Client_Comment_Model(BaseModel):
-    comment: Optional[List[str]] = None
     rating: Optional[int] = None
+    comment: Optional[List[str]] = None
     master_id: int
 
 class Client_Orders_Model(BaseModel):
-    orders: Optional[List[str]] = None
-    deadline: Optional[str] = None
+    orders: List[str]
+    deadline: str
     
 class Login(BaseModel):
     phone_number: str
@@ -41,6 +43,7 @@ class Login(BaseModel):
     
 class ForgotPassword(BaseModel):
     phone_number:str
+    
     
 class ChangePassword(Login):
     new_password: str

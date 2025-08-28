@@ -13,10 +13,9 @@ router=APIRouter(prefix="/api/v1/auth",tags=["AUTHORIZATION"])
 async def login(data: schema.Login = Depends()):
     return await auth_module.login(data)
 
-@router.post('/send-message')
-async def send_message(phone: str, background_tasks: BackgroundTasks):
-    background_tasks.add_task(auth_module.send_message, phone,  message = "Вы изменили свой пароль")
-    return {'message':"Сообщение отобразился на фоне"}
+@router.put('/forgot-password')
+async def forgot_password(data: schema.ForgotPassword = Depends() ):
+    return await auth_module.forgot_password(data)
 
 @router.put("/change-password")
 async def change_password(data: schema.ChangePassword = Depends()):
@@ -25,3 +24,12 @@ async def change_password(data: schema.ChangePassword = Depends()):
 @router.post('/refresh/token')
 async def refresh_token(response: Response, payload: dict = Depends(JWTHandler.refresh_token)):
     return await auth_module.refresh_token(payload)
+
+@router.delete('/profile')
+async def delete_profile(payload: dict = Depends(JWTHandler.access_token)):
+    return await auth_module.delete_profile(payload["user_id"])
+
+@router.delete('/logout')
+async def logout(payload: dict = Depends(JWTHandler.access_token)):
+    return await auth_module.logout(payload['user_id'])
+

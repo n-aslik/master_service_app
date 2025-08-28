@@ -8,11 +8,11 @@ router=APIRouter(
 
 )
 @router.post("/client")
-async def create_client(data: schema.Client_Model = Depends(), payload: dict = Depends(JWTHandler.access_token)):
+async def create_client(data: schema.Client_Model = Depends()):
     return await client_module.create_client(data)
 
 @router.put("/client")
-async def edit_user(id: int, data:schema.Client_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
+async def edit_user(data:schema.Client_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
     return await client_module.update_client(payload["user_id"], data)
     
 @router.delete('client')
@@ -23,10 +23,6 @@ async def delete_client(id:int, payload: dict = Depends(JWTHandler.access_token)
 async def get_client(payload: dict = Depends(JWTHandler.access_token)):
     return await client_module.get_client(payload["user_id"])
 
-@router.get("/clients")
-async def get_clients(id: Optional[int] = None, payload: dict = Depends(JWTHandler.access_token)):
-    return await client_module.get_clients(id)
-
 @router.post('/client-comment')
 async def create_client_comment(data: schema.Client_Comment_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
     return await client_module.create_client_comments(payload["user_id"], data)
@@ -35,20 +31,12 @@ async def create_client_comment(data: schema.Client_Comment_Model = Depends(), p
 async def create_client_orders(data:schema.Client_Orders_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
     return await client_module.create_client_orders(payload["user_id"], data)
 
-@router.put('/client-comment')
-async def get_client_comment(data: schema.Client_Comment_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
-    return await client_module.get_client_comment(payload["user_id"], data)
-    
 @router.put('/client-orders')
 async def get_client_orders(data: schema.Client_Orders_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
     return await client_module.update_client_orders(payload["user_id"], data)
 
-@router.get('/client-comment')
-async def get_client_comment(client_id: Optional[int] = None, payload:dict=Depends(JWTHandler.access_token)):
-    return await client_module.get_client_comment(payload["user_id"], client_id)
-    
 @router.get('/client-orders')
-async def get_client_orders(client_id: Optional[int] = None, payload:dict=Depends(JWTHandler.access_token)):
-    return await client_module.get_client_orders(client_id)
+async def get_client_orders( payload:dict=Depends(JWTHandler.access_token)):
+    return await client_module.get_client_orders()
 
 

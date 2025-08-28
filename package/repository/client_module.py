@@ -5,22 +5,23 @@ from ..schemas import schema
 async def create_client(data: schema.Client_Model):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.create_client(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);" ,
+        cur.execute("CALL masters_services.create_client(%s, %s, %s, %s, %s, %s, %s, %s, %s);" ,
                     ('{}', data.first_name,
                            data.last_name,
                            data.gender,
                            data.birth_date,
                            data.phone_number,
-                           data.password,
                            data.email,
                            data.social_nik,
                            data.qr_code))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
+        if client['status'] == 0:
             return client
+        elif client["status"] == 1:
+            return client["message"]
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-async def update_client(id: int, data: schema.User):
+async def update_client(id: str, data: schema.User):
     with async_get_db() as db:
         cur = db.cursor()
         cur.execute("CALL masters_services.update_client(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);" ,
@@ -35,86 +36,68 @@ async def update_client(id: int, data: schema.User):
                            data.qr_code
                     ))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
+        if client['status'] == 0:
             return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-async def delete_client(id: int):
+async def delete_client(id: str):
     with async_get_db() as db:
         cur = db.cursor()
         cur.execute("CALL masters_services.delete_client(%s, %s);" ,(id, '{}'))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
+        if client['status'] == 0:
             return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-async def get_client(id: int):
+async def get_client(id: str):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("SELECT masters_services.get_client(%s);",(id,))
+        cur.execute("SELECT masters_services.get_client_by_id(%s);",(id,))
         client = cur.fetchone()[0]
         return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-async def get_clients(id: int):
+
+async def create_client_orders(id: str, data: schema.Client_Orders_Model):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("SELECT masters_services.get_clients(%s);",(id,))
-        clients = cur.fetchone()[0]
-        return clients
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{clients}")
-
-
-async def create_client_orders(id: int, data: schema.Client_Orders_Model):
-    with async_get_db() as db:
-        cur = db.cursor()
-        cur.execute("CALL masters_services.create_client_orders(%s, %s, %s, %s);" ,('{}', id, data.deadline, data.orders))
+        cur.execute("CALL masters_services.create_clients_orders(%s, %s, %s, %s);" ,( id,  data.orders, data.deadline, '{}'))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
+        if client['status'] == 0:
             return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-async def create_client_comments(id: int, data: schema.Client_Comment_Model):
+async def create_client_comments(id: str, data: schema.Client_Comment_Model):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.get_client_comment(%s, %s, %s, %s, %s);" ,('{}', id, data.master_id, data.rating, data.comment))
+        cur.execute("CALL masters_services.get_clients_comment(%s, %s, %s, %s, %s);" ,('{}', id, data.rating, data.comment, data.master_id))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
+        if client['status'] == 0:
             return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-async def update_client_orders(id: int, data: schema.Client_Orders_Model):
+async def update_client_orders(id: str, data: schema.Client_Orders_Model):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.update_client_orders(%s, %s, %s, %s);" ,('{}', id, data.deadline, data.orders))
+        cur.execute("CALL masters_services.update_clients_orders(%s, %s, %s, %s);" ,( id, data.orders,  data.deadline, '{}'))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
+        if client['status'] == 0:
             return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-async def update_client_comments(id: int, data: schema.Client_Comment_Model):
+async def update_client_comments(id: str, data: schema.Client_Comment_Model):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.update_client_comment(%s, %s, %s, %s, %s);" ,('{}', id, data.master_id, data.rating, data.comment))
+        cur.execute("CALL masters_services.update_clients_comment(%s, %s, %s, %s, %s);" ,('{}', id,  data.rating, data.comment, data.master_id))
         client = cur.fetchone()[0]
-        if client['status'] == 1:
+        if client['status'] == 0:
             return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
-
-
-async def get_client_comment(master_id: int, client_id: int):
+async def get_client_orders():
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("SELECT masters_services.get_client_comment(%s, %s);" ,(master_id, client_id))
-        client = cur.fetchone()[0]
-        return client
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
-
-async def get_client_orders(client_id: int):
-    with async_get_db() as db:
-        cur = db.cursor()
-        cur.execute("SELECT masters_services.get_client_orders( %s );" ,( client_id,))
+        cur.execute("SELECT masters_services.get_client_orders(  );" ,( ))
         client = cur.fetchone()[0]
         return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
