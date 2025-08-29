@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, Dict, List
+
 
 class User(BaseModel): 
     first_name: str
@@ -47,6 +48,5 @@ class ForgotPassword(BaseModel):
     
 class ChangePassword(Login):
     new_password: str
+    
 
-
-   
