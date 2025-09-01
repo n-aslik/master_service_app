@@ -1,9 +1,9 @@
-const roomdata = document.getElementById("room-data");
-const roomid = roomdata.getAttribute("data-room-id");
-const firstname = roomdata.getAttribute("data-first-name");
-const userid = roomdata.getAttribute("data-user-id");
+const roomdata = document.getElementById(`room-data`);
+const roomid = roomdata.getAttribute(`data-room-id`);
+const firstname = roomdata.getAttribute(`data-first-name`);
+const userid = roomdata.getAttribute(`data-user-id`);
 
-const ws = new WebSocket("ws://localhost:8000/ws/chat/${roomid}/${userid}?firstname=${first_name}");
+const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomid}/${userid}?firstname=${firstname}`);
 
 ws.onmessage = (event = MessageEvent)=>{
     const messages=document.getElementById("messages");
@@ -29,8 +29,8 @@ function sendmessage() {
     }
 }
 
-document.getElementById("messageinput").addEventListener("keypress", (e = KeyboardEvent)=>{
-    if (e.key === "Enter"){
+document.getElementById(`messageinput`).addEventListener(`keypress`, (e = KeyboardEvent)=>{
+    if (e.key === `Enter`){
         sendmessage();
     }
 });
