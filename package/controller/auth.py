@@ -33,3 +33,4 @@ async def delete_profile(payload: dict = Depends(JWTHandler.access_token)):
 async def logout(payload: dict = Depends(JWTHandler.access_token)):
     return await auth_module.logout(payload['user_id'])
 
+

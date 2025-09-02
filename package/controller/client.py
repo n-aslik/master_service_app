@@ -15,7 +15,7 @@ async def create_client(data: schema.Client_Model = Depends()):
 async def edit_user(data:schema.Client_Model = Depends(), payload:dict=Depends(JWTHandler.access_token)):
     return await client_module.update_client(payload["user_id"], data)
     
-@router.delete('client')
+@router.delete('/client')
 async def delete_client(id:int, payload: dict = Depends(JWTHandler.access_token)):
     return await client_module.delete_client(payload["user_id"])
 
@@ -38,5 +38,6 @@ async def get_client_orders(data: schema.Client_Orders_Model = Depends(), payloa
 @router.get('/client-orders')
 async def get_client_orders( payload:dict=Depends(JWTHandler.access_token)):
     return await client_module.get_client_orders()
+
 
 

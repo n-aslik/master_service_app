@@ -12,7 +12,7 @@ class User(BaseModel):
     social_nik: Optional[str] = None
     qr_code: Optional[str] = None
 
-    
+
 
 class Client_Model(User):
     pass

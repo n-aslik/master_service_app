@@ -1,6 +1,7 @@
 from fastapi import HTTPException,status
 from database.dbconn import async_get_db
 from ..schemas import schema
+from typing import List, Optional
 
 async def create_client(data: schema.Client_Model):
     with async_get_db() as db:
@@ -101,6 +102,17 @@ async def get_client_orders():
         client = cur.fetchone()[0]
         return client
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
+
+
+async def update_user_chat(id: str, first_name: str, room_id: int, message: List[str] = None):
+    with async_get_db() as db:
+        cur = db.cursor()
+        cur.execute("CALL masters_services.update_users_chat(%s, %s, %s, %s);" ,( id, first_name, room_id, message, '{}'))
+        client = cur.fetchone()[0]
+        if client['status'] == 0:
+            return client
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
+
 
 
     
