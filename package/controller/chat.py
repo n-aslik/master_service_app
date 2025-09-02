@@ -2,7 +2,10 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, APIRouter,Depends
 from fastapi.responses import HTMLResponse
 from typing import Dict
 from package.repository import client_module
-from package.service import jwt_hand as JWTHandler
+from package.service import jwt_hand as JWTHandler, config
+from jose import jwt, JWTError
+
+secret = config.Keys()
 
 class ConnectionManager:
     def __init__(self):
@@ -40,6 +43,20 @@ manager = ConnectionManager()
 @router.websocket("/{room_id}/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id:int, user_id: str, firstname: str, payload: dict = Depends(JWTHandler.access_token)):
     user_id = payload["user_id"]
+    token = websocket.query_params.get("token")
+    if not token:
+        await websocket.close(code=1008)  # Policy Violation
+        return
+
+    try:
+        payload = jwt.decode(token, secret.private_key, algorithms = 'RS256')
+        user_id_from_token = payload.get("user_id")
+        if user_id_from_token != user_id:
+            await websocket.close(code=1008)
+            return
+    except JWTError:
+        await websocket.close(code=1008)
+        return
     await manager.connect(websocket, room_id, user_id)
     await manager.broadcast(f"{firstname} (ID: {user_id}) присоединился к чату", room_id, user_id)
     try:
