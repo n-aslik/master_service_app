@@ -2,29 +2,26 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, APIRouter,Depends
 from fastapi.responses import HTMLResponse
 from typing import Dict
 from package.repository import client_module
-from package.service import jwt_hand as JWTHandler, config
-from jose import jwt, JWTError
 
-secret = config.Keys()
 
 class ConnectionManager:
     def __init__(self):
         self.active_connection: Dict[int, Dict[str, WebSocket]] = {}
         
-    async def connect(self, websocket: WebSocket, room_id: int, user_id: str ):
+    async def connect(self, websocket: WebSocket, room_id: int, user_id: int ):
         await websocket.accept()
         if room_id not in self.active_connection:
             self.active_connection[room_id] = {}
         self.active_connection[room_id][user_id] = websocket
     
-    def disconnect(self, room_id: int, user_id: str):
+    def disconnect(self, room_id: int, user_id: int):
         if room_id in self.active_connection and user_id in self.active_connection[room_id]:
             del self.active_connection[room_id][user_id]
             if not self.active_connection[room_id]:
                 del self.active_connection[room_id]
                 
       
-    async def broadcast(self, message: str, room_id: int, sender_id: str):
+    async def broadcast(self, message: str, room_id: int, sender_id: int):
         if room_id in self.active_connection:
             for user_id, connection in self.active_connection[room_id].items():
                 message_with_class = {
@@ -41,22 +38,7 @@ manager = ConnectionManager()
 
 
 @router.websocket("/{room_id}/{user_id}")
-async def websocket_endpoint(websocket: WebSocket, room_id:int, user_id: str, firstname: str, payload: dict = Depends(JWTHandler.access_token)):
-    user_id = payload["user_id"]
-    token = websocket.query_params.get("token")
-    if not token:
-        await websocket.close(code=1008)  # Policy Violation
-        return
-
-    try:
-        payload = jwt.decode(token, secret.private_key, algorithms = 'RS256')
-        user_id_from_token = payload.get("user_id")
-        if user_id_from_token != user_id:
-            await websocket.close(code=1008)
-            return
-    except JWTError:
-        await websocket.close(code=1008)
-        return
+async def websocket_endpoint(websocket: WebSocket, room_id:int, user_id: int, firstname: str):
     await manager.connect(websocket, room_id, user_id)
     await manager.broadcast(f"{firstname} (ID: {user_id}) присоединился к чату", room_id, user_id)
     try:
