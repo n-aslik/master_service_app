@@ -12,6 +12,5 @@ async def home_page(request: Request):
 
 @router.post('/join-chat', response_class=HTMLResponse)
 async def join_chat(request: Request, first_name: str = Form(...), room_id: int = Form(...)):
-    user_id = hash(first_name) % 10000
-    return templates.TemplateResponse("index.html",{"request": request, "room_id": room_id, "first_name": first_name, "user_id": user_id})
+    return templates.TemplateResponse("index.html",{"request": request, "room_id": room_id, "first_name": first_name})
     

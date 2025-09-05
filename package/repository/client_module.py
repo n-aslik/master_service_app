@@ -104,10 +104,10 @@ async def get_client_orders():
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail = f"{client}")
 
 
-async def update_user_chat(id: int, first_name: str, room_id: int, message: List[str] = None):
+async def update_user_chat(id: int, firstname: str, room_id: int, message: str = None):
     with async_get_db() as db:
         cur = db.cursor()
-        cur.execute("CALL masters_services.update_users_chat(%s, %s, %s, %s, %s);" ,( '{}', id, first_name, room_id, message))
+        cur.execute("CALL masters_services.update_users_chat(%s, %s, %s, %s, %s);" ,( '{}', id, firstname, room_id, message))
         client = cur.fetchone()[0]
         if client['status'] == 0:
             return client
